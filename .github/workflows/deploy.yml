@@ -26,7 +26,8 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          VITE_BASE_PATH: /onsite-cab-detailing/
+          # Custom domain serves from site root (not /repo-name/)
+          VITE_BASE_PATH: /
       - name: SPA fallback for client routes
         run: cp dist/index.html dist/404.html
       - uses: actions/upload-pages-artifact@v3
