@@ -461,13 +461,27 @@ textarea {
   position: relative;
   z-index: 1;
   width: min(1120px, calc(100% - 2.5rem));
-  margin: 0 auto;
+  margin-inline: auto;
   padding: clamp(3.5rem, 8vw, 5.5rem) 0;
-  max-width: 34rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: flex-start;
   animation: riseIn 0.9s var(--ease) both;
+}
+
+@media (min-width: 900px) {
+  .hero__content {
+    /* Sit on the quiet left of the gradient on desktop */
+    max-width: min(1120px, calc(100% - 2.5rem));
+    padding-right: min(42vw, 28rem);
+  }
+
+  .hero__title,
+  .hero__lede,
+  .hero__actions {
+    max-width: 26rem;
+  }
 }
 
 @keyframes riseIn {
