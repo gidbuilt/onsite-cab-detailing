@@ -5,6 +5,7 @@ const packages = [
   {
     name: "Refresh Detail",
     price: "$199",
+    originalPrice: "$249",
     description:
       "Perfect for machines that are regularly maintained and need a professional refresh.",
     includes: [
@@ -20,6 +21,7 @@ const packages = [
   {
     name: "Full Interior Detail",
     price: "$299",
+    originalPrice: "$349",
     description: "Restore your cab to a clean, comfortable workspace.",
     includes: [
       "Everything in the Refresh Detail",
@@ -36,6 +38,7 @@ const packages = [
   {
     name: "Cab Restoration",
     price: "$399",
+    originalPrice: "$449",
     description:
       "For heavily neglected machines with excessive dirt, mud, grease, concrete dust, or years of built-up grime.",
     includes: [
@@ -93,7 +96,9 @@ export function Services() {
               <div className="service-tier__copy">
                 <h2>{tier.name}</h2>
                 <p className="service-tier__price">
-                  <span>Starting at</span> {tier.price}
+                  <span>Starting at</span>
+                  <s className="service-tier__original">{tier.originalPrice}</s>
+                  <span className="service-tier__sale">{tier.price}</span>
                 </p>
                 <p className="service-tier__desc">{tier.description}</p>
               </div>

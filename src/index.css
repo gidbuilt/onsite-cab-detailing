@@ -717,6 +717,11 @@ textarea {
   color: var(--muted);
 }
 
+.book-option__original {
+  text-decoration: line-through;
+  opacity: 0.75;
+}
+
 .book-option--compact {
   place-items: center;
   text-align: center;
@@ -887,6 +892,10 @@ textarea {
 
 .service-tier__price {
   margin: 0.4rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem 0.65rem;
   font-family: var(--font-display);
   font-size: 1.45rem;
   font-weight: 700;
@@ -894,15 +903,25 @@ textarea {
   color: var(--ink);
 }
 
-.service-tier__price span {
-  display: inline-block;
-  margin-right: 0.35rem;
+.service-tier__price > span:first-child {
   font-family: var(--font-body);
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--muted);
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.service-tier__original {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+.service-tier__sale {
+  color: var(--navy);
 }
 
 .service-tier__desc {

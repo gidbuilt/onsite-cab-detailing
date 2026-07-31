@@ -3,9 +3,27 @@ import type { FormEvent } from "react";
 import { SparkDivider } from "../components/SparkDivider";
 
 const packages = [
-  { id: "refresh", name: "Refresh Detail", price: "From $199", duration: "1.5–2 hours" },
-  { id: "full", name: "Full Interior Detail", price: "From $299", duration: "3–4.5 hours" },
-  { id: "restoration", name: "Cab Restoration", price: "From $399", duration: "Custom" },
+  {
+    id: "refresh",
+    name: "Refresh Detail",
+    price: "From $199",
+    originalPrice: "$249",
+    duration: "1.5–2 hours",
+  },
+  {
+    id: "full",
+    name: "Full Interior Detail",
+    price: "From $299",
+    originalPrice: "$349",
+    duration: "3–4.5 hours",
+  },
+  {
+    id: "restoration",
+    name: "Cab Restoration",
+    price: "From $399",
+    originalPrice: "$449",
+    duration: "Custom",
+  },
 ] as const;
 
 const morningSlots = [
@@ -161,6 +179,7 @@ export function Book() {
                     />
                     <span className="book-option__title">{item.name}</span>
                     <span className="book-option__meta">
+                      <s className="book-option__original">{item.originalPrice}</s>{" "}
                       {item.price} · {item.duration}
                     </span>
                   </label>
