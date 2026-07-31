@@ -447,14 +447,29 @@ textarea {
 .hero__shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    105deg,
-    rgba(255, 255, 255, 0.88) 0%,
-    rgba(255, 255, 255, 0.68) 30%,
-    rgba(247, 249, 252, 0.32) 54%,
-    rgba(247, 249, 252, 0.08) 76%,
-    transparent 100%
-  );
+  /* Mobile: stronger wash so stacked text stays readable over the photo */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.82) 0%,
+      rgba(255, 255, 255, 0.72) 42%,
+      rgba(255, 255, 255, 0.55) 68%,
+      rgba(255, 255, 255, 0.28) 100%
+    );
+}
+
+@media (min-width: 900px) {
+  .hero__shade {
+    /* Desktop: keep the existing left-to-right gradient */
+    background: linear-gradient(
+      105deg,
+      rgba(255, 255, 255, 0.88) 0%,
+      rgba(255, 255, 255, 0.68) 30%,
+      rgba(247, 249, 252, 0.32) 54%,
+      rgba(247, 249, 252, 0.08) 76%,
+      transparent 100%
+    );
+  }
 }
 
 .hero__content {
