@@ -588,7 +588,7 @@ textarea {
   overflow: hidden;
   background:
     linear-gradient(135deg, rgba(243, 247, 251, 0.94), rgba(232, 240, 248, 0.9)),
-    url("/hero-cab.png") center/cover;
+    url("/hero-cab.jpg") center/cover;
   color: var(--ink);
   border-block: 1px solid var(--line);
 }

@@ -7,8 +7,8 @@ export function Home() {
       <section className="hero" aria-label="OnSite Cab Detailing">
         <div className="hero__media" aria-hidden="true">
           <img
-            src={`${import.meta.env.BASE_URL}hero-cab.png`}
-            alt=""
+            src={`${import.meta.env.BASE_URL}hero-cab.jpg`}
+            alt="OnSite Cab Detailing cleaning a CAT excavator cab on site"
             fetchPriority="high"
           />
           <div className="hero__shade" />
