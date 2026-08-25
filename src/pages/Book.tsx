@@ -226,7 +226,7 @@ export function Book() {
             ) : (
               <p>
                 Tap <strong>Book Now</strong> to email and text this request to
-                us. Or call to confirm directly.
+                us. Or use the phone number below to call.
               </p>
             )}
             {sendError ? <p className="book-send-error">{sendError}</p> : null}
@@ -241,9 +241,6 @@ export function Book() {
                   {sending ? "Sending…" : "Book Now"}
                 </button>
               ) : null}
-              <a className="btn btn--primary" href={`tel:+${OWNER_PHONE_E164}`}>
-                Call to confirm
-              </a>
               <button
                 type="button"
                 className="btn btn--outline"
