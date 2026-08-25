@@ -94,6 +94,10 @@ function nextBookableDays(count: number) {
   return days;
 }
 
+const OWNER_EMAIL = "gid.osborn@gmail.com";
+const OWNER_PHONE_E164 = "12509387938";
+const OWNER_PHONE_DISPLAY = "250-938-7938";
+
 export function Book() {
   const days = useMemo(() => nextBookableDays(14), []);
   const [service, setService] = useState<(typeof packages)[number]["id"]>("full");
@@ -104,6 +108,9 @@ export function Book() {
   const [location, setLocation] = useState("");
   const [notes, setNotes] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const availableSlots = useMemo(
     () => (date ? slotsForDate(date) : []),
@@ -117,10 +124,78 @@ export function Book() {
     if (slot && !nextSlots.includes(slot)) setSlot("");
   }
 
+  function bookingMessage() {
+    return [
+      "New booking request — OnSite Cab Detailing",
+      "",
+      `Service: ${selectedPackage?.name ?? ""}`,
+      `Date: ${date}`,
+      `Time: ${slot}`,
+      `Name: ${name.trim()}`,
+      `Phone: ${phone.trim()}`,
+      `Location: ${location.trim() || "—"}`,
+      `Notes: ${notes.trim() || "—"}`,
+    ].join("\n");
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!date || !slot || !name.trim() || !phone.trim()) return;
     setSubmitted(true);
+    setSent(false);
+    setSendError(null);
+  }
+
+  async function sendBookingRequest() {
+    if (sending || sent) return;
+    setSending(true);
+    setSendError(null);
+
+    const message = bookingMessage();
+    const summary = `${selectedPackage?.name} · ${date} · ${slot}`;
+
+    try {
+      const response = await fetch(
+        `https://formsubmit.co/ajax/${OWNER_EMAIL}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            name: name.trim(),
+            phone: phone.trim(),
+            service: selectedPackage?.name,
+            date,
+            slot,
+            location: location.trim() || "—",
+            notes: notes.trim() || "—",
+            _subject: `Booking request: ${summary}`,
+            _template: "table",
+            message,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Could not send booking email");
+      }
+
+      setSent(true);
+
+      // Opens Messages with a prefilled booking text to your number (customer taps Send).
+      const smsHref = `sms:+${OWNER_PHONE_E164}?body=${encodeURIComponent(message)}`;
+      window.setTimeout(() => {
+        window.location.href = smsHref;
+      }, 250);
+    } catch {
+      setSendError(
+        "Couldn’t send the booking request. Please call or try again.",
+      );
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -136,29 +211,55 @@ export function Book() {
 
         {submitted ? (
           <div className="book-confirm">
-            <h2>Time slot selected</h2>
+            <h2>{sent ? "Booking request sent" : "Time slot selected"}</h2>
             <p>
               <strong>
                 {selectedPackage?.name} · {date} · {slot}
               </strong>
             </p>
-            <p>
-              Call <a href="tel:2509387938">250-938-7938</a> to confirm this
-              booking for {name.trim()}. We’ll verify the time before coming on
-              site.
-            </p>
+            {sent ? (
+              <p>
+                Thanks {name.trim()}. Your request was emailed to us. If a text
+                draft opened, tap Send so we get it on {OWNER_PHONE_DISPLAY}{" "}
+                too. We’ll confirm by phone before coming on site.
+              </p>
+            ) : (
+              <p>
+                Tap <strong>Book Now</strong> to email and text this request to
+                us. Or call to confirm directly.
+              </p>
+            )}
+            {sendError ? <p className="book-send-error">{sendError}</p> : null}
             <div className="book-confirm__actions">
-              <a className="btn btn--primary" href="tel:2509387938">
+              {!sent ? (
+                <button
+                  type="button"
+                  className="btn btn--primary"
+                  onClick={sendBookingRequest}
+                  disabled={sending}
+                >
+                  {sending ? "Sending…" : "Book Now"}
+                </button>
+              ) : null}
+              <a className="btn btn--primary" href={`tel:+${OWNER_PHONE_E164}`}>
                 Call to confirm
               </a>
               <button
                 type="button"
                 className="btn btn--outline"
-                onClick={() => setSubmitted(false)}
+                onClick={() => {
+                  setSubmitted(false);
+                  setSent(false);
+                  setSendError(null);
+                }}
               >
                 Change time slot
               </button>
             </div>
+            <p className="book-note">
+              Prefer to call?{" "}
+              <a href={`tel:+${OWNER_PHONE_E164}`}>{OWNER_PHONE_DISPLAY}</a>
+            </p>
           </div>
         ) : (
           <form className="book-form" onSubmit={handleSubmit}>
@@ -295,11 +396,11 @@ export function Book() {
                 {slot ? ` · ${slot}` : " · select a time slot"}
               </p>
               <button className="btn btn--primary" type="submit" disabled={!slot}>
-                Request this time slot
+                Continue
               </button>
               <p className="book-note">
                 Prefer to call?{" "}
-                <a href="tel:2509387938">250-938-7938</a>
+                <a href={`tel:+${OWNER_PHONE_E164}`}>{OWNER_PHONE_DISPLAY}</a>
               </p>
             </div>
           </form>
