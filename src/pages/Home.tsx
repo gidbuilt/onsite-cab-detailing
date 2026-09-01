@@ -78,7 +78,7 @@ export function Home() {
         <div className="container">
           <div className="section-head">
             <p className="section__eyebrow">Packages</p>
-            <h2 className="section__title">Starting at $199</h2>
+            <h2 className="section__title">Starting at $249</h2>
             <p className="section__lede">
               Choose a Refresh Detail, Full Interior Detail, or Cab Restoration —
               plus add-ons when you need them.

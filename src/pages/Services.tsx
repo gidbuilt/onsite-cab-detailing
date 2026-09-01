@@ -4,8 +4,8 @@ import { SparkDivider } from "../components/SparkDivider";
 const packages = [
   {
     name: "Refresh Detail",
-    price: "$199",
-    originalPrice: "$249",
+    price: "$249",
+    originalPrice: "$299",
     description:
       "Perfect for machines that are regularly maintained and need a professional refresh.",
     includes: [
@@ -20,8 +20,8 @@ const packages = [
   },
   {
     name: "Full Interior Detail",
-    price: "$299",
-    originalPrice: "$349",
+    price: "$349",
+    originalPrice: "$399",
     description: "Restore your cab to a clean, comfortable workspace.",
     includes: [
       "Everything in the Refresh Detail",
@@ -37,8 +37,8 @@ const packages = [
   },
   {
     name: "Cab Restoration",
-    price: "$399",
-    originalPrice: "$449",
+    price: "$449",
+    originalPrice: "$499",
     description:
       "For heavily neglected machines with excessive dirt, mud, grease, concrete dust, or years of built-up grime.",
     includes: [
@@ -54,10 +54,10 @@ const packages = [
 ] as const;
 
 const addOns = [
-  { name: "Seat shampoo & extraction", price: "$40" },
-  { name: "Odour treatment", price: "$50" },
-  { name: "Interior protectant", price: "$25" },
-  { name: "Window exterior clean", price: "$40" },
+  { name: "Seat shampoo & extraction", price: "$70" },
+  { name: "Odour treatment", price: "$80" },
+  { name: "Interior protectant", price: "$55" },
+  { name: "Window exterior clean", price: "$70" },
   {
     name: "Extra dirty surcharge (if required)",
     price: "Quoted before work begins",

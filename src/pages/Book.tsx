@@ -6,22 +6,22 @@ const packages = [
   {
     id: "refresh",
     name: "Refresh Detail",
-    price: "From $199",
-    originalPrice: "$249",
+    price: "From $249",
+    originalPrice: "$299",
     duration: "1.5–2 hours",
   },
   {
     id: "full",
     name: "Full Interior Detail",
-    price: "From $299",
-    originalPrice: "$349",
+    price: "From $349",
+    originalPrice: "$399",
     duration: "3–4.5 hours",
   },
   {
     id: "restoration",
     name: "Cab Restoration",
-    price: "From $399",
-    originalPrice: "$449",
+    price: "From $449",
+    originalPrice: "$499",
     duration: "Custom",
   },
 ] as const;
