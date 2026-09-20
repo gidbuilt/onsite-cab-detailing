@@ -1,7 +1,9 @@
 import { useEffect } from "react";
+import type { ReactNode } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
+import { Admin } from "./pages/Admin";
 import { Book } from "./pages/Book";
 import { Home } from "./pages/Home";
 import { Services } from "./pages/Services";
@@ -37,20 +39,48 @@ function ScrollManager() {
   return null;
 }
 
+function PublicLayout({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <Header />
+      <main className="site-main">{children}</main>
+      <Footer />
+    </>
+  );
+}
+
 export default function App() {
   return (
     <div className="site-shell">
       <ScrollManager />
-      <Header />
-      <main className="site-main">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/book" element={<Book />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
-      <Footer />
+      <Routes>
+        <Route path="/admin" element={<Admin />} />
+        <Route
+          path="/"
+          element={
+            <PublicLayout>
+              <Home />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/services"
+          element={
+            <PublicLayout>
+              <Services />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/book"
+          element={
+            <PublicLayout>
+              <Book />
+            </PublicLayout>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </div>
   );
 }

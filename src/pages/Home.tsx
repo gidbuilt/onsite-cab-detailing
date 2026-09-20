@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
 import { SparkDivider } from "../components/SparkDivider";
+import { formatMoney } from "../lib/store";
+import { useAppData } from "../lib/useAppData";
 
 export function Home() {
+  const { data } = useAppData();
+  const startingPrice = Math.min(...data.packages.map((pkg) => pkg.price));
+
   return (
     <>
       <section className="hero" aria-label="OnSite Cab Detailing">
@@ -78,7 +83,7 @@ export function Home() {
         <div className="container">
           <div className="section-head">
             <p className="section__eyebrow">Packages</p>
-            <h2 className="section__title">Starting at $249</h2>
+            <h2 className="section__title">Starting at {formatMoney(startingPrice)}</h2>
             <p className="section__lede">
               Choose a Refresh Detail, Full Interior Detail, or Cab Restoration —
               plus add-ons when you need them.

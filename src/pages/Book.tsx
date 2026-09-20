@@ -1,30 +1,8 @@
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { SparkDivider } from "../components/SparkDivider";
-
-const packages = [
-  {
-    id: "refresh",
-    name: "Refresh Detail",
-    price: "From $249",
-    originalPrice: "$299",
-    duration: "1.5–2 hours",
-  },
-  {
-    id: "full",
-    name: "Full Interior Detail",
-    price: "From $349",
-    originalPrice: "$399",
-    duration: "3–4.5 hours",
-  },
-  {
-    id: "restoration",
-    name: "Cab Restoration",
-    price: "From $449",
-    originalPrice: "$499",
-    duration: "Custom",
-  },
-] as const;
+import { formatMoney } from "../lib/store";
+import { useAppData } from "../lib/useAppData";
 
 const morningSlots = [
   "7:00 AM",
@@ -99,8 +77,10 @@ const OWNER_PHONE_E164 = "12509387938";
 const OWNER_PHONE_DISPLAY = "250-938-7938";
 
 export function Book() {
+  const { data } = useAppData();
+  const packages = data.packages;
   const days = useMemo(() => nextBookableDays(14), []);
-  const [service, setService] = useState<(typeof packages)[number]["id"]>("full");
+  const [service, setService] = useState(packages[0]?.id ?? "full");
   const [date, setDate] = useState(days[0]?.value ?? "");
   const [slot, setSlot] = useState("");
   const [name, setName] = useState("");
@@ -277,8 +257,10 @@ export function Book() {
                     />
                     <span className="book-option__title">{item.name}</span>
                     <span className="book-option__meta">
-                      <s className="book-option__original">{item.originalPrice}</s>{" "}
-                      {item.price} · {item.duration}
+                      <s className="book-option__original">
+                        {formatMoney(item.originalPrice)}
+                      </s>{" "}
+                      From {formatMoney(item.price)} · {item.duration}
                     </span>
                   </label>
                 ))}

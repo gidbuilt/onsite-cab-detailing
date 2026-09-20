@@ -1,70 +1,13 @@
 import { Link } from "react-router-dom";
 import { SparkDivider } from "../components/SparkDivider";
-
-const packages = [
-  {
-    name: "Refresh Detail",
-    price: "$249",
-    originalPrice: "$299",
-    description:
-      "Perfect for machines that are regularly maintained and need a professional refresh.",
-    includes: [
-      "Vacuum and debris removal",
-      "Dust removal from dash, controls & vents",
-      "Interior wipe down",
-      "Windows cleaned",
-      "Floor and rubber mats cleaned",
-    ],
-    time: "1.5–2 hours",
-    featured: false,
-  },
-  {
-    name: "Full Interior Detail",
-    price: "$349",
-    originalPrice: "$399",
-    description: "Restore your cab to a clean, comfortable workspace.",
-    includes: [
-      "Everything in the Refresh Detail",
-      "Deep cleaning of all interior surfaces",
-      "Compressed air blow-out of hard-to-reach areas",
-      "Seat cleaning and conditioning (where applicable)",
-      "Thorough floor scrub and mat cleaning",
-      "Interior glass cleaning",
-      "Final quality inspection",
-    ],
-    time: "3–4.5 hours",
-    featured: true,
-  },
-  {
-    name: "Cab Restoration",
-    price: "$449",
-    originalPrice: "$499",
-    description:
-      "For heavily neglected machines with excessive dirt, mud, grease, concrete dust, or years of built-up grime.",
-    includes: [
-      "Everything in the Full Interior Detail",
-      "Extra labour for heavily soiled interiors",
-      "Stain treatment where possible",
-      "Intensive detailing of difficult areas",
-    ],
-    time: null,
-    note: "Final price confirmed before work begins.",
-    featured: false,
-  },
-] as const;
-
-const addOns = [
-  { name: "Seat shampoo & extraction", price: "$70" },
-  { name: "Odour treatment", price: "$80" },
-  { name: "Interior protectant", price: "$55" },
-  { name: "Window exterior clean", price: "$70" },
-  {
-    name: "Extra dirty surcharge (if required)",
-    price: "Quoted before work begins",
-  },
-];
+import { formatMoney } from "../lib/store";
+import { useAppData } from "../lib/useAppData";
 
 export function Services() {
+  const { data } = useAppData();
+  const packages = data.packages;
+  const addOns = data.addOns;
+
   return (
     <>
       <section className="page-hero">
@@ -83,22 +26,26 @@ export function Services() {
         <div className="container service-stack">
           {packages.map((tier) => (
             <article
-              key={tier.name}
+              key={tier.id}
               className={`service-tier${tier.featured ? " service-tier--featured" : ""}`}
             >
-              {tier.featured && (
+              {tier.featured ? (
                 <div className="service-tier__badge">
                   <span className="spark" aria-hidden="true" />
                   Most Popular
                 </div>
-              )}
+              ) : null}
 
               <div className="service-tier__copy">
                 <h2>{tier.name}</h2>
                 <p className="service-tier__price">
                   <span>Starting at</span>
-                  <s className="service-tier__original">{tier.originalPrice}</s>
-                  <span className="service-tier__sale">{tier.price}</span>
+                  <s className="service-tier__original">
+                    {formatMoney(tier.originalPrice)}
+                  </s>
+                  <span className="service-tier__sale">
+                    {formatMoney(tier.price)}
+                  </span>
                 </p>
                 <p className="service-tier__desc">{tier.description}</p>
               </div>
@@ -109,7 +56,7 @@ export function Services() {
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
-                {"note" in tier && tier.note ? (
+                {tier.note ? (
                   <p className="note" style={{ marginTop: "1rem" }}>
                     {tier.note}
                   </p>
@@ -141,9 +88,13 @@ export function Services() {
             <h3>Add-On Services</h3>
             <ul className="addon-list">
               {addOns.map((item) => (
-                <li key={item.name}>
+                <li key={item.id}>
                   <span>{item.name}</span>
-                  <strong>{item.price}</strong>
+                  <strong>
+                    {item.price == null
+                      ? item.priceLabel || "Quoted"
+                      : formatMoney(item.price)}
+                  </strong>
                 </li>
               ))}
             </ul>
