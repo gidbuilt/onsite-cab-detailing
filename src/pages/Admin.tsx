@@ -17,7 +17,8 @@ import type {
   InvoiceLine,
   ServicePackage,
 } from "../lib/types";
-import { useAppData } from "../lib/useAppData";
+import { syncStatusLabel } from "../lib/cloudConfig";
+import { useAppData, useCloudSync } from "../lib/useAppData";
 
 type Tab = "packages" | "addons" | "customers" | "invoices";
 
@@ -68,7 +69,8 @@ export function Admin() {
   const [tab, setTab] = useState<Tab>("packages");
   const [backupMessage, setBackupMessage] = useState("");
   const importInputRef = useRef<HTMLInputElement>(null);
-  const { data, update } = useAppData();
+  const { data, update, syncStatus } = useAppData();
+  useCloudSync();
 
   function handleLogin(event: FormEvent) {
     event.preventDefault();
@@ -166,6 +168,13 @@ export function Admin() {
         <div>
           <p className="admin__eyebrow">OnSite Cab Detailing</p>
           <h1>Admin</h1>
+          <p
+            className={`admin-sync admin-sync--${syncStatus}`}
+            role="status"
+            aria-live="polite"
+          >
+            Cloud: {syncStatusLabel(syncStatus)}
+          </p>
         </div>
         <div className="admin__top-actions">
           <button className="btn btn--outline" type="button" onClick={exportBackup}>
@@ -203,6 +212,14 @@ export function Admin() {
           </button>
         </div>
       </header>
+      {syncStatus === "not_configured" ? (
+        <p className="admin-backup-msg" role="status">
+          Cloud sync is not configured. This browser still saves to localStorage
+          only. Add <code>VITE_FIREBASE_*</code> env vars (see{" "}
+          <code>.env.example</code>) and rebuild so invoices and customers sync
+          across devices. Export/Import backup remains available as a safety net.
+        </p>
+      ) : null}
       {backupMessage ? (
         <p className="admin-backup-msg" role="status">
           {backupMessage}
@@ -865,9 +882,9 @@ function InvoicesPanel({
 
       {invoices.length === 0 ? (
         <p className="admin-hint">
-          No invoices on this phone/browser yet. Invoices are saved on the device
-          where you create them. On your computer, tap <strong>Export backup</strong>,
-          send the file here, then tap <strong>Import backup</strong>.
+          No invoices yet. With cloud sync configured they appear on every device
+          signed into Admin. Otherwise use <strong>Export backup</strong> /{" "}
+          <strong>Import backup</strong> to move data between devices.
         </p>
       ) : null}
 

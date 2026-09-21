@@ -1,12 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import type { ReactNode } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
-import { Admin } from "./pages/Admin";
 import { Book } from "./pages/Book";
 import { Home } from "./pages/Home";
 import { Services } from "./pages/Services";
+
+const Admin = lazy(() =>
+  import("./pages/Admin").then((mod) => ({ default: mod.Admin })),
+);
 
 function ScrollManager() {
   const { pathname, hash } = useLocation();
@@ -54,7 +57,14 @@ export default function App() {
     <div className="site-shell">
       <ScrollManager />
       <Routes>
-        <Route path="/admin" element={<Admin />} />
+        <Route
+          path="/admin"
+          element={
+            <Suspense fallback={<div className="admin-login">Loading…</div>}>
+              <Admin />
+            </Suspense>
+          }
+        />
         <Route
           path="/"
           element={

@@ -1361,6 +1361,34 @@ textarea {
   margin-bottom: 1.25rem;
 }
 
+.admin-sync {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.admin-sync--synced {
+  color: #1f6b3a;
+}
+
+.admin-sync--saving {
+  color: var(--steel);
+}
+
+.admin-sync--offline,
+.admin-sync--error {
+  color: #9b1c1c;
+}
+
+.admin-sync--not_configured {
+  color: #8a5a00;
+}
+
+.admin-backup-msg code {
+  font-size: 0.88em;
+}
+
 .admin__top-actions {
   display: flex;
   flex-wrap: wrap;

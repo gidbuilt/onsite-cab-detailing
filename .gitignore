@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 .qr_vendor/
+
+# Env files (keep .env.example committed)
+.env
+.env.*
+!.env.example
