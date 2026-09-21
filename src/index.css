@@ -1738,16 +1738,13 @@ textarea {
     print-color-adjust: exact;
   }
 
-  body * {
-    visibility: hidden !important;
-  }
-
-  .invoice-sheet,
-  .invoice-sheet * {
-    visibility: visible !important;
+  /* Avoid body * { visibility:hidden } — it can leave the screen blank after print. */
+  body > *:not(.invoice-print-overlay) {
+    display: none !important;
   }
 
   .invoice-print-overlay {
+    display: block !important;
     position: static !important;
     inset: auto !important;
     overflow: visible !important;
@@ -1758,13 +1755,10 @@ textarea {
 
   .no-print {
     display: none !important;
-    visibility: hidden !important;
   }
 
   .invoice-sheet {
-    position: absolute;
-    left: 0;
-    top: 0;
+    position: static;
     width: 7.5in;
     min-height: 10in;
     margin: 0 !important;

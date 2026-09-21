@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { isAdminAuthed, loginAdmin, logoutAdmin } from "../lib/auth";
 import {
@@ -1076,7 +1077,7 @@ function InvoicePrint({
     window.location.href = buildInvoiceEmail(invoice);
   }
 
-  return (
+  return createPortal(
     <div className="invoice-print-overlay">
       <div className="invoice-print-toolbar no-print">
         <button
@@ -1165,7 +1166,8 @@ function InvoicePrint({
           Thank you for your business! Hope to hear from you again soon.
         </p>
       </article>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
