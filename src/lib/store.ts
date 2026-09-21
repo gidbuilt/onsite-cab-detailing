@@ -100,7 +100,12 @@ export function loadData(): AppData {
           ? parsed.addOns
           : base.addOns,
       customers: Array.isArray(parsed.customers) ? parsed.customers : [],
-      invoices: Array.isArray(parsed.invoices) ? parsed.invoices : [],
+      invoices: Array.isArray(parsed.invoices)
+        ? parsed.invoices.map((invoice) => ({
+            ...invoice,
+            poNumber: invoice.poNumber ?? "",
+          }))
+        : [],
     };
   } catch {
     return base;

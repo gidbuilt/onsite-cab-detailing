@@ -41,6 +41,7 @@ export type InvoiceStatus = "draft" | "sent" | "paid";
 export type Invoice = {
   id: string;
   number: string;
+  poNumber: string;
   customerId: string;
   customerName: string;
   customerPhone: string;

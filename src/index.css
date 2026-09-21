@@ -1575,9 +1575,20 @@ textarea {
 
 .invoice-print-toolbar {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.65rem;
   justify-content: center;
+  align-items: center;
   margin-bottom: 1rem;
+}
+
+.invoice-print-hint {
+  flex: 1 1 100%;
+  margin: 0;
+  text-align: center;
+  color: #fff;
+  font-size: 0.9rem;
+  opacity: 0.92;
 }
 
 .invoice-sheet {

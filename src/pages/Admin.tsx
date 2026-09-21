@@ -678,6 +678,7 @@ function InvoicesPanel({
       customerPhone: customer?.phone ?? "",
       customerEmail: customer?.email ?? "",
       customerAddress: customer?.address ?? "",
+      poNumber: "",
       lines: [
         {
           id: uid("line"),
@@ -754,6 +755,7 @@ function InvoicesPanel({
         <thead>
           <tr>
             <th>Number</th>
+            <th>P.O.</th>
             <th>Customer</th>
             <th>Date</th>
             <th>Total</th>
@@ -764,12 +766,13 @@ function InvoicesPanel({
         <tbody>
           {invoices.length === 0 ? (
             <tr>
-              <td colSpan={6}>No invoices yet.</td>
+              <td colSpan={7}>No invoices yet.</td>
             </tr>
           ) : (
             invoices.map((invoice) => (
               <tr key={invoice.id}>
                 <td>{invoice.number}</td>
+                <td>{invoice.poNumber || "—"}</td>
                 <td>{invoice.customerName}</td>
                 <td>{invoice.createdAt}</td>
                 <td>{formatMoney(invoiceTotal(invoice))}</td>
@@ -795,11 +798,19 @@ function InvoicesPanel({
                   </select>
                 </td>
                 <td className="admin-table__actions">
-                  <button type="button" onClick={() => setDraft(invoice)}>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setDraft({
+                        ...invoice,
+                        poNumber: invoice.poNumber ?? "",
+                      })
+                    }
+                  >
                     Edit
                   </button>
                   <button type="button" onClick={() => setPrintId(invoice.id)}>
-                    Print
+                    Generate PDF
                   </button>
                   <button
                     type="button"
@@ -837,6 +848,16 @@ function InvoicesPanel({
                   </option>
                 ))}
               </select>
+            </label>
+            <label>
+              P.O. number
+              <input
+                value={draft.poNumber}
+                onChange={(e) =>
+                  setDraft({ ...draft, poNumber: e.target.value })
+                }
+                placeholder="Optional"
+              />
             </label>
             <label>
               Invoice date
@@ -1030,6 +1051,41 @@ function InvoicesPanel({
   );
 }
 
+function buildInvoiceEmail(invoice: Invoice) {
+  const total = formatMoney(invoiceTotal(invoice));
+  const lines = invoice.lines
+    .map(
+      (line) =>
+        `• ${line.description} × ${line.quantity} — ${formatMoney(line.quantity * line.unitPrice)}`,
+    )
+    .join("\n");
+  const subject = `Invoice ${invoice.number} — OnSite Cab Detailing`;
+  const body = [
+    `Hi${invoice.customerName ? ` ${invoice.customerName}` : ""},`,
+    "",
+    `Please find invoice ${invoice.number} below.`,
+    invoice.poNumber ? `P.O.: ${invoice.poNumber}` : null,
+    `Date: ${invoice.createdAt}`,
+    `Due: ${invoice.dueDate}`,
+    `Total due: ${total}`,
+    "",
+    "Line items:",
+    lines,
+    invoice.notes ? `\nNotes: ${invoice.notes}` : null,
+    "",
+    "You can also attach the PDF from Print / Save PDF.",
+    "",
+    "Thanks,",
+    "OnSite Cab Detailing",
+    "250-938-7938",
+  ]
+    .filter((line) => line != null)
+    .join("\n");
+
+  const to = encodeURIComponent(invoice.customerEmail.trim());
+  return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
 function InvoicePrint({
   invoice,
   onClose,
@@ -1037,6 +1093,10 @@ function InvoicePrint({
   invoice: Invoice;
   onClose: () => void;
 }) {
+  function handleEmail() {
+    window.location.href = buildInvoiceEmail(invoice);
+  }
+
   return (
     <div className="invoice-print-overlay">
       <div className="invoice-print-toolbar no-print">
@@ -1047,9 +1107,17 @@ function InvoicePrint({
         >
           Print / Save PDF
         </button>
+        <button className="btn btn--outline" type="button" onClick={handleEmail}>
+          Email invoice
+        </button>
         <button className="btn btn--outline" type="button" onClick={onClose}>
           Close
         </button>
+        <p className="invoice-print-hint">
+          Print / Save PDF opens your browser print dialog — choose “Save as PDF”
+          to download. Email opens your mail app with the invoice details ready to
+          send{invoice.customerEmail ? ` to ${invoice.customerEmail}` : ""}.
+        </p>
       </div>
       <article className="invoice-sheet">
         <header className="invoice-sheet__head">
@@ -1064,6 +1132,7 @@ function InvoicePrint({
             <p>
               <strong>{invoice.number}</strong>
             </p>
+            {invoice.poNumber ? <p>P.O.: {invoice.poNumber}</p> : null}
             <p>Date: {invoice.createdAt}</p>
             <p>Due: {invoice.dueDate}</p>
             <p>Status: {invoice.status}</p>
