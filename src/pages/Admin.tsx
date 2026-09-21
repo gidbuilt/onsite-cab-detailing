@@ -19,6 +19,22 @@ import { useAppData } from "../lib/useAppData";
 
 type Tab = "packages" | "addons" | "customers" | "invoices";
 
+const ETRANSFER_EMAIL = "rhiannonb5nz@gmail.com";
+const DEFAULT_INVOICE_NOTES = `E-transfers can be sent to ${ETRANSFER_EMAIL}`;
+
+function renderNotesWithBoldEmail(notes: string): ReactNode {
+  const parts = notes.split(/([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/gi);
+  return parts.map((part, index) =>
+    part.includes("@") ? (
+      <strong key={index} className="invoice-sheet__email">
+        {part}
+      </strong>
+    ) : (
+      <span key={index}>{part}</span>
+    ),
+  );
+}
+
 export function Admin() {
   const [authed, setAuthed] = useState(() => {
     try {
@@ -686,7 +702,7 @@ function InvoicesPanel({
           unitPrice: packages[0]?.price ?? 0,
         },
       ],
-      notes: "E-transfers can be sent to rhiannonb5nz@gmail.com",
+      notes: DEFAULT_INVOICE_NOTES,
       status: "draft",
       createdAt: new Date().toISOString().slice(0, 10),
       dueDate: new Date().toISOString().slice(0, 10),
@@ -781,9 +797,7 @@ function InvoicesPanel({
                       setDraft({
                         ...invoice,
                         poNumber: invoice.poNumber ?? "",
-                        notes:
-                          invoice.notes ||
-                          "E-transfers can be sent to rhiannonb5nz@gmail.com",
+                        notes: invoice.notes || DEFAULT_INVOICE_NOTES,
                       })
                     }
                   >
@@ -1079,8 +1093,9 @@ function InvoicePrint({
           Close
         </button>
         <p className="invoice-print-hint">
-          Print / Save PDF opens your browser print dialog — choose “Save as PDF”
-          to download. Email opens your mail app with the invoice details ready to
+          Print / Save PDF opens your browser print dialog. Keep paper size set to
+          Letter, then choose “Save as PDF”.
+          Email opens your mail app with the invoice details ready to
           send{invoice.customerEmail ? ` to ${invoice.customerEmail}` : ""}.
         </p>
       </div>
@@ -1142,7 +1157,9 @@ function InvoicePrint({
           Total due: <strong>{formatMoney(invoiceTotal(invoice))}</strong>
         </p>
         {invoice.notes ? (
-          <p className="invoice-sheet__notes">{invoice.notes}</p>
+          <p className="invoice-sheet__notes">
+            {renderNotesWithBoldEmail(invoice.notes)}
+          </p>
         ) : null}
         <p className="invoice-sheet__thanks">
           Thank you for your business! Hope to hear from you again soon.
