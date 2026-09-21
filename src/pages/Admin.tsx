@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
@@ -8,6 +8,7 @@ import {
   invoiceTotal,
   nextInvoiceNumber,
   uid,
+  type AppData,
 } from "../lib/store";
 import type {
   AddOn,
@@ -65,6 +66,8 @@ export function Admin() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [tab, setTab] = useState<Tab>("packages");
+  const [backupMessage, setBackupMessage] = useState("");
+  const importInputRef = useRef<HTMLInputElement>(null);
   const { data, update } = useAppData();
 
   function handleLogin(event: FormEvent) {
@@ -76,6 +79,54 @@ export function Admin() {
     setLoginError("");
     setPassword("");
     setAuthed(true);
+  }
+
+  function exportBackup() {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    const stamp = new Date().toISOString().slice(0, 10);
+    anchor.href = url;
+    anchor.download = `onsite-admin-backup-${stamp}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setBackupMessage("Backup downloaded. AirDrop or email it to your phone, then Import backup there.");
+  }
+
+  function importBackup(file: File | undefined) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result)) as Partial<AppData>;
+        if (
+          !Array.isArray(parsed.packages) ||
+          !Array.isArray(parsed.addOns) ||
+          !Array.isArray(parsed.customers) ||
+          !Array.isArray(parsed.invoices)
+        ) {
+          throw new Error("Invalid backup file");
+        }
+        update(() => ({
+          packages: parsed.packages!,
+          addOns: parsed.addOns!,
+          customers: parsed.customers!,
+          invoices: parsed.invoices!.map((invoice) => ({
+            ...invoice,
+            poNumber: invoice.poNumber ?? "",
+          })),
+        }));
+        setBackupMessage(
+          `Imported ${parsed.invoices!.length} invoice(s) and other admin data.`,
+        );
+        setTab("invoices");
+      } catch {
+        setBackupMessage("Couldn’t import that file. Use a backup exported from Admin.");
+      }
+    };
+    reader.readAsText(file);
   }
 
   if (!authed) {
@@ -117,6 +168,26 @@ export function Admin() {
           <h1>Admin</h1>
         </div>
         <div className="admin__top-actions">
+          <button className="btn btn--outline" type="button" onClick={exportBackup}>
+            Export backup
+          </button>
+          <button
+            className="btn btn--outline"
+            type="button"
+            onClick={() => importInputRef.current?.click()}
+          >
+            Import backup
+          </button>
+          <input
+            ref={importInputRef}
+            className="sr-only"
+            type="file"
+            accept="application/json,.json"
+            onChange={(e) => {
+              importBackup(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
           <Link className="btn btn--outline" to="/">
             View site
           </Link>
@@ -132,6 +203,11 @@ export function Admin() {
           </button>
         </div>
       </header>
+      {backupMessage ? (
+        <p className="admin-backup-msg" role="status">
+          {backupMessage}
+        </p>
+      ) : null}
 
       <nav className="admin__tabs" aria-label="Admin sections">
         {(
@@ -786,6 +862,60 @@ function InvoicesPanel({
       {customers.length === 0 ? (
         <p className="admin-hint">Add a customer first, then create an invoice.</p>
       ) : null}
+
+      {invoices.length === 0 ? (
+        <p className="admin-hint">
+          No invoices on this phone/browser yet. Invoices are saved on the device
+          where you create them. On your computer, tap <strong>Export backup</strong>,
+          send the file here, then tap <strong>Import backup</strong>.
+        </p>
+      ) : null}
+
+      <div className="admin-invoice-cards">
+        {invoices.map((invoice) => (
+          <article className="admin-invoice-card" key={invoice.id}>
+            <div className="admin-invoice-card__main">
+              <strong>{invoice.number}</strong>
+              <span>{invoice.customerName}</span>
+              <span>
+                {invoice.createdAt} · {formatMoney(invoiceTotal(invoice))}
+              </span>
+              <span>P.O.: {invoice.poNumber || "—"}</span>
+            </div>
+            <div className="admin-invoice-card__actions">
+              <button
+                type="button"
+                className="btn btn--outline"
+                onClick={() =>
+                  setDraft({
+                    ...invoice,
+                    poNumber: invoice.poNumber ?? "",
+                    notes: invoice.notes || DEFAULT_INVOICE_NOTES,
+                  })
+                }
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                className="btn btn--primary"
+                onClick={() => setPrintId(invoice.id)}
+              >
+                Generate PDF
+              </button>
+              <button
+                type="button"
+                className="btn btn--ghost is-danger"
+                onClick={() =>
+                  onChange(invoices.filter((item) => item.id !== invoice.id))
+                }
+              >
+                Delete
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
 
       <Table>
         <thead>

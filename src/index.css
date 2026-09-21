@@ -1432,6 +1432,79 @@ textarea {
 
 .admin-table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-backup-msg {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: #e8f1fb;
+  color: var(--navy);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.admin-invoice-cards {
+  display: none;
+  gap: 0.85rem;
+}
+
+.admin-invoice-card {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: #f8fbfe;
+}
+
+.admin-invoice-card__main {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.admin-invoice-card__main strong {
+  color: var(--navy);
+  font-size: 1.05rem;
+}
+
+.admin-invoice-card__main span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.admin-invoice-card__actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.admin-invoice-card__actions .btn {
+  width: 100%;
+  min-height: 2.75rem;
+}
+
+.admin-invoice-card__actions .is-danger {
+  color: #9b1c1c;
+}
+
+@media (max-width: 720px) {
+  .admin-invoice-cards {
+    display: grid;
+  }
+
+  .admin-panel:has(.admin-invoice-cards) > .admin-table-wrap {
+    display: none;
+  }
+
+  .admin__top-actions {
+    width: 100%;
+  }
+
+  .admin__top-actions .btn {
+    flex: 1 1 calc(50% - 0.4rem);
+    min-height: 2.75rem;
+  }
 }
 
 .admin-table {
@@ -1604,7 +1677,7 @@ textarea {
 
 .invoice-sheet {
   box-sizing: border-box;
-  width: 8.5in;
+  width: min(8.5in, 100%);
   min-height: 11in;
   margin: 0 auto 2rem;
   padding: 0.7in;
