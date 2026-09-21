@@ -4,10 +4,11 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 
-const redirect = sessionStorage.getItem("spa-redirect");
-if (redirect) {
-  sessionStorage.removeItem("spa-redirect");
-  if (redirect !== location.pathname + location.search + location.hash) {
+// Fallback if index.html restore hasn't run yet (e.g. cached HTML + new JS).
+const spaMatch = location.search.match(/[?&]spa=([^&]*)/);
+if (spaMatch) {
+  const redirect = decodeURIComponent(spaMatch[1]);
+  if (redirect.startsWith("/")) {
     history.replaceState(null, "", redirect);
   }
 }

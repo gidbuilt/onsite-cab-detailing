@@ -17,12 +17,15 @@
     <title>OnSite Cab Detailing | North Okanagan</title>
     <script>
       (function () {
-        var redirect = sessionStorage.getItem("spa-redirect");
-        if (!redirect) return;
-        sessionStorage.removeItem("spa-redirect");
-        if (redirect !== location.pathname + location.search + location.hash) {
-          history.replaceState(null, "", redirect);
-        }
+        var match = location.search.match(/[?&]spa=([^&]*)/);
+        if (!match) return;
+        var redirect = decodeURIComponent(match[1]);
+        if (!redirect || redirect.charAt(0) !== "/") return;
+        history.replaceState(
+          null,
+          "",
+          redirect + (location.hash && redirect.indexOf("#") === -1 ? location.hash : ""),
+        );
       })();
     </script>
   </head>
