@@ -21,7 +21,13 @@ import { useAppData } from "../lib/useAppData";
 type Tab = "packages" | "addons" | "customers" | "invoices";
 
 export function Admin() {
-  const [authed, setAuthed] = useState(() => isAdminAuthed());
+  const [authed, setAuthed] = useState(() => {
+    try {
+      return isAdminAuthed();
+    } catch {
+      return false;
+    }
+  });
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [tab, setTab] = useState<Tab>("packages");

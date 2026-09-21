@@ -28,8 +28,7 @@ jobs:
         env:
           # Custom domain serves from site root
           VITE_BASE_PATH: /
-      - name: SPA fallback for client routes
-        run: cp dist/index.html dist/404.html
+      # public/404.html is copied into dist by Vite (redirects into / for SPA routes)
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

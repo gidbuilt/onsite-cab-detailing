@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>OnSite Cab Detailing</title>
+    <script>
+      // GitHub Pages serves unknown paths as 404. ES modules often don't boot
+      // on that response, so bounce through / and restore the path.
+      sessionStorage.setItem(
+        "spa-redirect",
+        location.pathname + location.search + location.hash,
+      );
+      location.replace("/");
+    </script>
+  </head>
+  <body></body>
+</html>

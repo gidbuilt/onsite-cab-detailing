@@ -1,21 +1,32 @@
 import { useCallback, useSyncExternalStore } from "react";
-import {
-  loadData,
-  saveData,
-  type AppData,
-} from "./store";
+import { loadData, saveData, STORAGE_KEY, type AppData } from "./store";
+
+let snapshot = loadData();
+let snapshotRaw = localStorage.getItem(STORAGE_KEY);
+
+function refreshSnapshot() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw === snapshotRaw) return snapshot;
+  snapshotRaw = raw;
+  snapshot = loadData();
+  return snapshot;
+}
 
 function subscribe(onStoreChange: () => void) {
-  window.addEventListener("onsite-data-changed", onStoreChange);
-  window.addEventListener("storage", onStoreChange);
+  const handler = () => {
+    refreshSnapshot();
+    onStoreChange();
+  };
+  window.addEventListener("onsite-data-changed", handler);
+  window.addEventListener("storage", handler);
   return () => {
-    window.removeEventListener("onsite-data-changed", onStoreChange);
-    window.removeEventListener("storage", onStoreChange);
+    window.removeEventListener("onsite-data-changed", handler);
+    window.removeEventListener("storage", handler);
   };
 }
 
 function getSnapshot(): AppData {
-  return loadData();
+  return snapshot;
 }
 
 export function useAppData() {
@@ -24,6 +35,8 @@ export function useAppData() {
   const update = useCallback((updater: (current: AppData) => AppData) => {
     const next = updater(loadData());
     saveData(next);
+    snapshot = next;
+    snapshotRaw = localStorage.getItem(STORAGE_KEY);
   }, []);
 
   return { data, update };
