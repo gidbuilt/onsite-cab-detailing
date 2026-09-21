@@ -1547,9 +1547,19 @@ textarea {
 
 .admin-line {
   display: grid;
-  grid-template-columns: 2fr 4.5rem 5.5rem 4.5rem auto;
+  grid-template-columns: 2fr 4.5rem 5.5rem 5.5rem 5.5rem auto;
   gap: 0.5rem;
   align-items: center;
+}
+
+.admin-line__amount {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.admin-line__amount s {
+  color: var(--muted);
+  font-weight: 500;
 }
 
 @media (max-width: 720px) {
@@ -1687,6 +1697,23 @@ textarea {
 .invoice-sheet__table td:nth-child(4) {
   text-align: right;
   white-space: nowrap;
+}
+
+.invoice-sheet__promo {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.invoice-sheet__promo s {
+  color: #888;
+  font-weight: 500;
+}
+
+.invoice-sheet__promo strong {
+  color: #0c2a4a;
+  font-weight: 700;
 }
 
 .invoice-sheet__total {

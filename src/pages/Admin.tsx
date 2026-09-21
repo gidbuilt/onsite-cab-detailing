@@ -23,6 +23,24 @@ type Tab = "packages" | "addons" | "customers" | "invoices";
 const ETRANSFER_EMAIL = "rhiannonb5nz@gmail.com";
 const DEFAULT_INVOICE_NOTES = `E-transfers can be sent to ${ETRANSFER_EMAIL}`;
 
+function packageLinePrices(pkg: ServicePackage): Pick<
+  InvoiceLine,
+  "unitPrice" | "originalUnitPrice"
+> {
+  const original =
+    pkg.originalPrice > pkg.price ? pkg.originalPrice : undefined;
+  return {
+    unitPrice: pkg.price,
+    ...(original != null ? { originalUnitPrice: original } : {}),
+  };
+}
+
+function lineHasPromo(line: InvoiceLine): boolean {
+  return (
+    line.originalUnitPrice != null && line.originalUnitPrice > line.unitPrice
+  );
+}
+
 function renderNotesWithBoldEmail(notes: string): ReactNode {
   const parts = notes.split(/([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/gi);
   return parts.map((part, index) =>
@@ -700,7 +718,9 @@ function InvoicesPanel({
           id: uid("line"),
           description: packages[0]?.name ?? "Service",
           quantity: 1,
-          unitPrice: packages[0]?.price ?? 0,
+          ...(packages[0]
+            ? packageLinePrices(packages[0])
+            : { unitPrice: 0 }),
         },
       ],
       notes: DEFAULT_INVOICE_NOTES,
@@ -892,7 +912,7 @@ function InvoicesPanel({
                           id: uid("line"),
                           description: pkg.name,
                           quantity: 1,
-                          unitPrice: pkg.price,
+                          ...packageLinePrices(pkg),
                         },
                       ],
                     });
@@ -981,6 +1001,7 @@ function InvoicesPanel({
                 <input
                   type="number"
                   min={0}
+                  title="Promo / sale price"
                   value={line.unitPrice}
                   onChange={(e) =>
                     updateLine(line.id, {
@@ -988,7 +1009,30 @@ function InvoicesPanel({
                     })
                   }
                 />
-                <span>{formatMoney(line.quantity * line.unitPrice)}</span>
+                <input
+                  type="number"
+                  min={0}
+                  title="Original price (optional)"
+                  placeholder="Was $"
+                  value={line.originalUnitPrice ?? ""}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    updateLine(line.id, {
+                      originalUnitPrice:
+                        value === "" ? undefined : Number(value) || 0,
+                    });
+                  }}
+                />
+                <span className="admin-line__amount">
+                  {lineHasPromo(line) ? (
+                    <>
+                      <s>{formatMoney(line.quantity * (line.originalUnitPrice ?? 0))}</s>{" "}
+                      {formatMoney(line.quantity * line.unitPrice)}
+                    </>
+                  ) : (
+                    formatMoney(line.quantity * line.unitPrice)
+                  )}
+                </span>
                 <button
                   type="button"
                   className="is-danger"
@@ -1034,10 +1078,16 @@ function InvoicesPanel({
 function buildInvoiceEmail(invoice: Invoice) {
   const total = formatMoney(invoiceTotal(invoice));
   const lines = invoice.lines
-    .map(
-      (line) =>
-        `• ${line.description} × ${line.quantity} — ${formatMoney(line.quantity * line.unitPrice)}`,
-    )
+    .map((line) => {
+      const amount = formatMoney(line.quantity * line.unitPrice);
+      if (lineHasPromo(line)) {
+        const was = formatMoney(
+          line.quantity * (line.originalUnitPrice as number),
+        );
+        return `• ${line.description} × ${line.quantity} — was ${was}, now ${amount}`;
+      }
+      return `• ${line.description} × ${line.quantity} — ${amount}`;
+    })
     .join("\n");
   const subject = `Invoice ${invoice.number} — OnSite Cab Detailing`;
   const body = [
@@ -1148,8 +1198,32 @@ function InvoicePrint({
               <tr key={line.id}>
                 <td>{line.description}</td>
                 <td>{line.quantity}</td>
-                <td>{formatMoney(line.unitPrice)}</td>
-                <td>{formatMoney(line.quantity * line.unitPrice)}</td>
+                <td>
+                  {lineHasPromo(line) ? (
+                    <span className="invoice-sheet__promo">
+                      <s>{formatMoney(line.originalUnitPrice as number)}</s>{" "}
+                      <strong>{formatMoney(line.unitPrice)}</strong>
+                    </span>
+                  ) : (
+                    formatMoney(line.unitPrice)
+                  )}
+                </td>
+                <td>
+                  {lineHasPromo(line) ? (
+                    <span className="invoice-sheet__promo">
+                      <s>
+                        {formatMoney(
+                          line.quantity * (line.originalUnitPrice as number),
+                        )}
+                      </s>{" "}
+                      <strong>
+                        {formatMoney(line.quantity * line.unitPrice)}
+                      </strong>
+                    </span>
+                  ) : (
+                    formatMoney(line.quantity * line.unitPrice)
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

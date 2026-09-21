@@ -34,6 +34,8 @@ export type InvoiceLine = {
   description: string;
   quantity: number;
   unitPrice: number;
+  /** Pre-promo rate shown struck through when higher than unitPrice. */
+  originalUnitPrice?: number;
 };
 
 export type InvoiceStatus = "draft" | "sent" | "paid";
