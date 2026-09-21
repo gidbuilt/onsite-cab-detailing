@@ -4,6 +4,14 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 
+const redirect = sessionStorage.getItem("spa-redirect");
+if (redirect) {
+  sessionStorage.removeItem("spa-redirect");
+  if (redirect !== location.pathname + location.search + location.hash) {
+    history.replaceState(null, "", redirect);
+  }
+}
+
 const basename =
   import.meta.env.BASE_URL === "/"
     ? undefined
