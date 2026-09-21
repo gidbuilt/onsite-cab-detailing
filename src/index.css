@@ -1607,6 +1607,19 @@ textarea {
   margin-bottom: 1.5rem;
 }
 
+.invoice-sheet__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.invoice-sheet__logo {
+  width: 4.5rem;
+  height: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .invoice-sheet__head h1,
 .invoice-sheet__meta h2 {
   margin: 0 0 0.35rem;

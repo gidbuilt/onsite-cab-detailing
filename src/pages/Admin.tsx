@@ -13,7 +13,6 @@ import type {
   Customer,
   Invoice,
   InvoiceLine,
-  InvoiceStatus,
   ServicePackage,
 } from "../lib/types";
 import { useAppData } from "../lib/useAppData";
@@ -687,7 +686,7 @@ function InvoicesPanel({
           unitPrice: packages[0]?.price ?? 0,
         },
       ],
-      notes: "Payment due upon completion unless otherwise arranged.",
+      notes: "E-transfers can be sent to rhiannonb5nz@gmail.com",
       status: "draft",
       createdAt: new Date().toISOString().slice(0, 10),
       dueDate: new Date().toISOString().slice(0, 10),
@@ -759,14 +758,13 @@ function InvoicesPanel({
             <th>Customer</th>
             <th>Date</th>
             <th>Total</th>
-            <th>Status</th>
             <th />
           </tr>
         </thead>
         <tbody>
           {invoices.length === 0 ? (
             <tr>
-              <td colSpan={7}>No invoices yet.</td>
+              <td colSpan={6}>No invoices yet.</td>
             </tr>
           ) : (
             invoices.map((invoice) => (
@@ -776,27 +774,6 @@ function InvoicesPanel({
                 <td>{invoice.customerName}</td>
                 <td>{invoice.createdAt}</td>
                 <td>{formatMoney(invoiceTotal(invoice))}</td>
-                <td>
-                  <select
-                    value={invoice.status}
-                    onChange={(e) =>
-                      onChange(
-                        invoices.map((item) =>
-                          item.id === invoice.id
-                            ? {
-                                ...item,
-                                status: e.target.value as InvoiceStatus,
-                              }
-                            : item,
-                        ),
-                      )
-                    }
-                  >
-                    <option value="draft">Draft</option>
-                    <option value="sent">Sent</option>
-                    <option value="paid">Paid</option>
-                  </select>
-                </td>
                 <td className="admin-table__actions">
                   <button
                     type="button"
@@ -804,6 +781,9 @@ function InvoicesPanel({
                       setDraft({
                         ...invoice,
                         poNumber: invoice.poNumber ?? "",
+                        notes:
+                          invoice.notes ||
+                          "E-transfers can be sent to rhiannonb5nz@gmail.com",
                       })
                     }
                   >
@@ -850,13 +830,14 @@ function InvoicesPanel({
               </select>
             </label>
             <label>
-              P.O. number
+              Purchase Order (P.O.)
               <input
-                value={draft.poNumber}
+                value={draft.poNumber ?? ""}
                 onChange={(e) =>
                   setDraft({ ...draft, poNumber: e.target.value })
                 }
-                placeholder="Optional"
+                placeholder="Customer P.O. number"
+                autoComplete="off"
               />
             </label>
             <label>
@@ -876,22 +857,6 @@ function InvoicesPanel({
                 value={draft.dueDate}
                 onChange={(e) => setDraft({ ...draft, dueDate: e.target.value })}
               />
-            </label>
-            <label>
-              Status
-              <select
-                value={draft.status}
-                onChange={(e) =>
-                  setDraft({
-                    ...draft,
-                    status: e.target.value as InvoiceStatus,
-                  })
-                }
-              >
-                <option value="draft">Draft</option>
-                <option value="sent">Sent</option>
-                <option value="paid">Paid</option>
-              </select>
             </label>
           </div>
 
@@ -1121,21 +1086,27 @@ function InvoicePrint({
       </div>
       <article className="invoice-sheet">
         <header className="invoice-sheet__head">
-          <div>
-            <h1>OnSite Cab Detailing</h1>
-            <p>Mobile heavy equipment cab detailing</p>
-            <p>North Okanagan · 250-938-7938</p>
-            <p>onsitecabdetailing.ca</p>
+          <div className="invoice-sheet__brand">
+            <img
+              className="invoice-sheet__logo"
+              src={`${import.meta.env.BASE_URL}logo.png`}
+              alt="OnSite Cab Detailing"
+            />
+            <div>
+              <h1>OnSite Cab Detailing</h1>
+              <p>Mobile heavy equipment cab detailing</p>
+              <p>North Okanagan · 250-938-7938</p>
+              <p>onsitecabdetailing.ca</p>
+            </div>
           </div>
           <div className="invoice-sheet__meta">
             <h2>Invoice</h2>
             <p>
               <strong>{invoice.number}</strong>
             </p>
-            {invoice.poNumber ? <p>P.O.: {invoice.poNumber}</p> : null}
+            <p>P.O.: {invoice.poNumber?.trim() ? invoice.poNumber : "—"}</p>
             <p>Date: {invoice.createdAt}</p>
             <p>Due: {invoice.dueDate}</p>
-            <p>Status: {invoice.status}</p>
           </div>
         </header>
         <section className="invoice-sheet__bill">
