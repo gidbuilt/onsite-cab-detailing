@@ -1144,7 +1144,9 @@ function InvoicePrint({
         {invoice.notes ? (
           <p className="invoice-sheet__notes">{invoice.notes}</p>
         ) : null}
-        <p className="invoice-sheet__thanks">Cleaner cab. Better day.</p>
+        <p className="invoice-sheet__thanks">
+          Thank you for your business! Hope to hear from you again soon.
+        </p>
       </article>
     </div>
   );
