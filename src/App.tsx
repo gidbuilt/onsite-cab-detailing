@@ -6,6 +6,10 @@ import { Header } from "./components/Header";
 import { Book } from "./pages/Book";
 import { Home } from "./pages/Home";
 import { Services } from "./pages/Services";
+import { GuidesIndex } from "./pages/guides/GuidesIndex";
+import { HeavyEquipmentCabCleaning } from "./pages/guides/HeavyEquipmentCabCleaning";
+import { CabDetailingTips } from "./pages/guides/CabDetailingTips";
+import { SeasonalCabMaintenance } from "./pages/guides/SeasonalCabMaintenance";
 
 const Admin = lazy(() =>
   import("./pages/Admin").then((mod) => ({ default: mod.Admin })),
@@ -86,6 +90,38 @@ export default function App() {
           element={
             <PublicLayout>
               <Book />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/guides"
+          element={
+            <PublicLayout>
+              <GuidesIndex />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/guides/heavy-equipment-cab-cleaning"
+          element={
+            <PublicLayout>
+              <HeavyEquipmentCabCleaning />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/guides/cab-detailing-tips"
+          element={
+            <PublicLayout>
+              <CabDetailingTips />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/guides/seasonal-cab-maintenance"
+          element={
+            <PublicLayout>
+              <SeasonalCabMaintenance />
             </PublicLayout>
           }
         />

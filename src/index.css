@@ -13,7 +13,7 @@
   --banner-deep: #e8edf4;
   --equipment: #c4a35a;
   --shadow: 0 16px 40px rgba(12, 42, 74, 0.08);
-  --header-h: 4.75rem;
+  --header-h: 8.3rem;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --font-display: "Outfit", sans-serif;
   --font-body: "Plus Jakarta Sans", sans-serif;
@@ -139,12 +139,12 @@ textarea {
   align-items: center;
   grid-column: 1;
   min-width: 0;
-  max-width: min(180px, 36vw);
+  max-width: min(280px, 48vw);
   overflow: hidden;
 }
 
 .brand__logo {
-  height: 3.6rem;
+  height: 6.3rem;
   width: auto;
   max-width: 100%;
   object-fit: contain;
@@ -1171,13 +1171,118 @@ textarea {
   color: var(--muted);
 }
 
+/* Guides */
+.guide-index {
+  display: grid;
+  gap: 0;
+}
+
+.guide-index__item {
+  padding: 1.75rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.guide-index__item:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.guide-index__item h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--navy);
+}
+
+.guide-index__item h2 a:hover {
+  color: var(--steel);
+}
+
+.guide-index__item p {
+  margin: 0.65rem 0 0;
+  max-width: 40rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.guide-index__more {
+  display: inline-block;
+  margin-top: 0.85rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.guide-index__more:hover {
+  color: var(--steel);
+}
+
+.guide-footer-nav {
+  padding-top: 0.5rem;
+}
+
+.guide-footer-nav p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.guide-footer-nav a {
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.guide-footer-nav a:hover {
+  color: var(--steel);
+}
+
+.guide-article .section__eyebrow a {
+  color: var(--steel);
+}
+
+.guide-article .section__eyebrow a:hover {
+  color: var(--navy);
+}
+
+.guide-prose {
+  padding-bottom: clamp(3.5rem, 7vw, 5.5rem);
+  display: grid;
+  gap: 2.5rem;
+  max-width: min(720px, calc(100% - 2.5rem));
+}
+
+.guide-prose section h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--navy);
+}
+
+.guide-prose section p {
+  margin: 0.85rem 0 0;
+  color: var(--charcoal);
+  line-height: 1.7;
+  font-size: 1.02rem;
+}
+
+.guide-prose a {
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.guide-prose a:hover {
+  color: var(--steel);
+}
+
 @media (min-width: 720px) {
   .brand {
-    max-width: 240px;
+    max-width: 360px;
   }
 
   .brand__logo {
-    height: 4rem;
+    height: 7rem;
   }
 
   .nav {

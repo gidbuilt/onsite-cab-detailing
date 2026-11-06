@@ -14,6 +14,7 @@ export function Footer() {
           <a href="tel:+12509387938">250-938-7938</a>
           <a href="https://onsitecabdetailing.ca">onsitecabdetailing.ca</a>
           <Link to="/services">Services</Link>
+          <Link to="/guides">Guides</Link>
           <Link to="/book">Book Now</Link>
         </div>
       </div>

@@ -8,6 +8,7 @@ const PHONE_DISPLAY = "250-938-7938";
 const links = [
   { to: "/", label: "Home", end: true },
   { to: "/services", label: "Services", end: false },
+  { to: "/guides", label: "Guides", end: false },
   { to: "/book", label: "Book Now", end: false },
 ];
 

@@ -95,6 +95,22 @@ export function Home() {
         </div>
       </section>
 
+      <section className="section section--tight">
+        <div className="container">
+          <div className="section-head">
+            <p className="section__eyebrow">Resources</p>
+            <h2 className="section__title">Cab care guides</h2>
+            <p className="section__lede">
+              Practical articles on heavy equipment cab cleaning, detailing
+              tips, and seasonal interior maintenance.
+            </p>
+          </div>
+          <Link className="btn btn--outline" to="/guides">
+            Browse Guides
+          </Link>
+        </div>
+      </section>
+
       <section className="section cta-band" id="book">
         <div className="container cta-band__inner">
           <div>
